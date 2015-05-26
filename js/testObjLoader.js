@@ -113,7 +113,7 @@ else window.onload = initializeLesson;
 
 // prepare loader and load the model
 var oLoader = new THREE.OBJLoader();
-oLoader.load('models/chair.obj', function(object, materials) {
+oLoader.load('models/grammystatue.obj', function(object, materials) {
 
   // var material = new THREE.MeshFaceMaterial(materials);
   var material2 = new THREE.MeshLambertMaterial({ color: 0xa65e00 });

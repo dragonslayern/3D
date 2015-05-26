@@ -76,6 +76,15 @@ var init = function() {
 	scene.add(skyBox);
 	skyBox.position.y = 1000;
 
+	//renderar kukbox
+	function render() {
+
+		requestAnimationFrame(render);
+		renderer.render(scene, camera);
+		update();
+	}
+	render();
+
 
 
 	// var boxGeometry = new THREE.BoxGeometry(40, 40, 40);
@@ -86,16 +95,16 @@ var init = function() {
 	// scene.add(MovingCube);
 	// MovingCube.position.y += 20.1;
 	//
-	// render();
+
 
 
 	//http://demo.romanliutikov.com/three/5/
 	loader = new THREE.JSONLoader();
 	var mesh;
-	loader.load('/models/grammystatue.js', function(geometry, materials) {
+	loader.load("models/grammystatue.json", function(geometry, materials) {
 
 		var material = new THREE.MeshLambertMaterial({
-			map: THREE.ImageUtils.loadTexture('/models/kw.jpg'),
+			map: THREE.ImageUtils.loadTexture('models/kw.jpg'),
 			colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
 			colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
 			colorSpecular: [0.8999999761581421, 0.8999999761581421,

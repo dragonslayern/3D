@@ -3,6 +3,8 @@ var camera, scene, renderer, geometry, material, plane, box, skybox,
 
 var init = function() {
 
+
+
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight,
 		0.1, 10000);
@@ -74,11 +76,15 @@ var init = function() {
 	scene.add(skyBox);
 	skyBox.position.y = 1000;
 
-	var boxGeometry = new THREE.BoxGeometry(40, 40, 40);
+
+
+	//var boxGeometry = new THREE.BoxGeometry(40, 40, 40);
+	var jsonLoader = new THREE.JSONLoader();
+	jsonLoader.load("models/grammystatue.json", function(geometry));
 	var boxMaterial = new THREE.MeshPhongMaterial({
 		color: 'blue'
 	});
-	MovingCube = new THREE.Mesh(boxGeometry, boxMaterial);
+	MovingCube = new THREE.Mesh(geometry, boxMaterial);
 	scene.add(MovingCube);
 	MovingCube.position.y += 20.1;
 

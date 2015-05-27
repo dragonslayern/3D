@@ -106,7 +106,7 @@ var init = function() {
 		mesh = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
 		mesh.scale.set(10, 10, 10);
 		mesh.position.y = 0;
-		mesh.position.x = -1;
+		mesh.position.x = 0;
 		scene.add(mesh);
 		alert("hit");
 

@@ -98,19 +98,46 @@ var init = function() {
 	// scene.add(MovingCube);
 	// MovingCube.position.y += 20.1;
 
-	var loader = new THREE.JSONLoader();
-	loader.load("models/LeePerrySmith.js", function(geometry) {
+	/*var loader = new THREE.JSONLoader();
+			loader.load( "grammystatue.json", function( geometry ) {
+				var material = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('images/crate.jpg') } );
 
-		//var geometry = new THREE.CubeGeometry(5,10,5);
+				//var geometry = new THREE.CubeGeometry(5,10,5);
 
-		mesh = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
-		mesh.scale.set(10, 10, 10);
-		mesh.position.y = 0;
-		mesh.position.x = 0;
-		scene.add(mesh);
-		alert("hit");
+			mesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+			mesh.scale.set( 2, 2, 2 );
+			mesh.position.y = 0;
+			mesh.position.x = 0;
+			scene.add( mesh );
 
-	});
+
+
+			}); */
+
+	var onProgress = function(xhr) {
+		if (xhr.lengthComputable) {
+			var percentComplete = xhr.loaded / xhr.total * 100;
+			console.log(Math.round(percentComplete, 2) + '% downloaded');
+		}
+	};
+
+	var onError = function(xhr) {};
+
+
+
+	THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+
+	var loader = new THREE.OBJMTLLoader();
+	loader.load('grammystatue.obj', 'grammystatue.mtl', function(object) {
+
+		object.position.y = 0;
+		object.position.x = 0;
+		scene.add(object);
+
+		mesh = object;
+
+	}, onProgress, onError);
+
 
 
 	function update() {
@@ -135,14 +162,14 @@ var init = function() {
 			mesh.rotation.set(0, 0, 0);
 		}
 
-		var relativeCameraOffset = new THREE.Vector3(0, 30, 300);
-
-		var cameraOffset = relativeCameraOffset.applyMatrix4(mesh.matrixWorld);
-
-		camera.position.x = cameraOffset.x;
-		camera.position.y = cameraOffset.y;
-		camera.position.z = cameraOffset.z;
-		camera.lookAt(mesh.position);
+		// var relativeCameraOffset = new THREE.Vector3(0, 30, 300);
+		//
+		// var cameraOffset = relativeCameraOffset.applyMatrix(mesh.matrixWorld);
+		//
+		// camera.position.x = cameraOffset.x;
+		// camera.position.y = cameraOffset.y;
+		// camera.position.z = cameraOffset.z;
+		// camera.lookAt(mesh.position);
 
 	}
 }

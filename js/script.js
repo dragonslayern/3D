@@ -1,5 +1,7 @@
 var camera, scene, renderer, geometry, material, plane, box, skybox,
-	textureSkybox, controls, clock, keyboard, MovingCube;
+	textureSkybox, controls, clock, keyboard, MovingCube, mesh;
+
+
 
 var init = function() {
 
@@ -74,6 +76,7 @@ var init = function() {
 	var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
 	var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
 	scene.add(skyBox);
+
 	skyBox.position.y = 1000;
 
 	//renderar kukbox
@@ -94,46 +97,20 @@ var init = function() {
 	// MovingCube = new THREE.Mesh(boxGeometry, boxMaterial);
 	// scene.add(MovingCube);
 	// MovingCube.position.y += 20.1;
-	//
 
+	var loader = new THREE.JSONLoader();
+	loader.load("models/LeePerrySmith.js", function(geometry) {
 
+		//var geometry = new THREE.CubeGeometry(5,10,5);
 
-	//http://demo.romanliutikov.com/three/5/
-	loader = new THREE.JSONLoader();
-	var mesh;
-	loader.load("models/grammystatue.json", function(geometry, materials) {
-
-		var material = new THREE.MeshLambertMaterial({
-			map: THREE.ImageUtils.loadTexture('models/kw.jpg'),
-			colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-			colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-			colorSpecular: [0.8999999761581421, 0.8999999761581421,
-				0.8999999761581421
-			]
-		});
-
-		mesh = new THREE.Mesh(
-			geometry,
-			material
-		);
-
-		mesh.receiveShadow = true;
-		mesh.castShadow = true;
-		mesh.rotation.y = -Math.PI / 5;
-
+		mesh = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+		mesh.scale.set(10, 10, 10);
+		mesh.position.y = 0;
+		mesh.position.x = -1;
 		scene.add(mesh);
-		//render();
+		alert("hit");
 
 	});
-
-
-	function render() {
-
-		requestAnimationFrame(render);
-		renderer.render(scene, camera);
-		update();
-	}
-
 
 
 	function update() {
@@ -142,30 +119,30 @@ var init = function() {
 		var rotateAngle = Math.PI / 2 * delta; // pi/2 radians (90 degrees) per second
 
 		if (keyboard.pressed("W"))
-			MovingCube.translateZ(-moveDistance);
+			mesh.translateZ(-moveDistance);
 		if (keyboard.pressed("S"))
-			MovingCube.translateZ(moveDistance);
+			mesh.translateZ(moveDistance);
 
 		// rotate left/right/up/down
 		var rotation_matrix = new THREE.Matrix4().identity();
 		if (keyboard.pressed("A"))
-			MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotateAngle);
+			mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotateAngle);
 		if (keyboard.pressed("D"))
-			MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
+			mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
 		if (keyboard.pressed("Z")) {
-			MovingCube.position.set(0, 25.1, 0);
-			MovingCube.rotation.set(0, 0, 0);
+			mesh.position.set(0, 25.1, 0);
+			mesh.rotation.set(0, 0, 0);
 		}
 
 		var relativeCameraOffset = new THREE.Vector3(0, 30, 300);
 
-		var cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
+		var cameraOffset = relativeCameraOffset.applyMatrix4(mesh.matrixWorld);
 
 		camera.position.x = cameraOffset.x;
 		camera.position.y = cameraOffset.y;
 		camera.position.z = cameraOffset.z;
-		camera.lookAt(MovingCube.position);
+		camera.lookAt(mesh.position);
 
 	}
 }

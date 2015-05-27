@@ -1,4 +1,7 @@
-var camera, scene, renderer, geometry, material, plane, box, skybox, textureSkybox, controls, clock, keyboard, MovingCube;
+var camera, scene, renderer, geometry, material, plane, box, skybox, textureSkybox, controls, clock, keyboard, MovingCube,
+ 	timeStep = 1/60;
+var mouse = {x: 0, y: 0};
+
 
 var init = function(){
 
@@ -7,15 +10,15 @@ var init = function(){
 	scene.add(camera);
 	//scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
-	renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight);
-	document.body.appendChild( renderer.domElement );
 
-	camera.position.set(0,1,30);
-	//camera.lookAt(scene.position);
+	// camera.position.set(0,1,30);
+	// camera.lookAt(scene.position);
 
 	keyboard = new THREEx.KeyboardState();
 	clock = new THREE.Clock();
+	
+	
+	
 
 	var pointLight	= new THREE.PointLight('white', 1);
 	pointLight.position.set(499, 499, 499);
@@ -47,23 +50,23 @@ var init = function(){
 			map: textureWall,
 			side: THREE.BackSide
 		}))
-		materialArray.push( new THREE.MeshBasicMaterial({
+	materialArray.push( new THREE.MeshBasicMaterial({
 			map: textureSkySun,
 			side: THREE.BackSide
 		}))
-			materialArray.push( new THREE.MeshBasicMaterial({
+	materialArray.push( new THREE.MeshBasicMaterial({
 			map: textureSky,
 			side: THREE.BackSide
 		}))
-				materialArray.push( new THREE.MeshBasicMaterial({
+	materialArray.push( new THREE.MeshBasicMaterial({
 			map: textureFloor,
 			side: THREE.BackSide
 		}))
-					materialArray.push( new THREE.MeshBasicMaterial({
+	materialArray.push( new THREE.MeshBasicMaterial({
 			map: textureWall,
 			side: THREE.BackSide
 		}))
-						materialArray.push( new THREE.MeshBasicMaterial({
+	materialArray.push( new THREE.MeshBasicMaterial({
 			map: textureWall,
 			side: THREE.BackSide
 		}))
@@ -78,24 +81,54 @@ var init = function(){
 	scene.add(MovingCube);
 	MovingCube.position.y += 20.1;
 
+	// controls = new THREE.MouseControls(MovingCube);
+	// controls = new THREE.FirstPersonControls(MovingCube);
+	// controls = new THREE.PointerLockControls(MovingCube);
+	controls = new THREE.OrbitControls(MovingCube);
+
+	controls.damping = 0.2;
+	controls.addEventListener( 'change', render );
+
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight);
+	document.body.appendChild( renderer.domElement );	
+	// document.addEventListener('mosuemove', onDocumentMouseMove, false);
+	// window.addEventListener( 'resize', onWindowResize, false );
+
 	render();
-}
+}	
+
+
+// function onWindowResize() {
+
+// 	camera.aspect = window.innerWidth / window.innerHeight;
+// 	camera.updateProjectionMatrix();
+
+// 	renderer.setSize( window.innerWidth, window.innerHeight );
+
+// 	render();
+
+// }
+
+    // function onDocumentMouseMove(event) {
+    //     mouse.x = (event.clientX / window.innerWidth) / 100;
+    //     mouse.y = (event.clientY / window.innerHeight) / 100;
+    //     console.log(mouse.x, mouse.y);
+    // }
+
 	
+function render () {
+	requestAnimationFrame( render );
+    // camera.lookAt(MovingCube.position);
+	renderer.render(scene, camera);
+	update();
+	// var delta = clock.getDelta();
+	// controls.update(delta);
 
-	function render () {
-
-		requestAnimationFrame( render );
-		renderer.render(scene, camera);
-		update();
-
-		
-
-	}
-
+}
 
 
-	function update()
-{
+function update(){
 	var delta = clock.getDelta(); // seconds.
 	var moveDistance = 200 * delta; // 200 pixels per second
 	var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
@@ -126,5 +159,4 @@ var init = function(){
 	camera.position.y = cameraOffset.y;
 	camera.position.z = cameraOffset.z;
 	camera.lookAt( MovingCube.position );
-
 }

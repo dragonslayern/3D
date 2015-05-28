@@ -1,25 +1,20 @@
-var camera, scene, renderer, geometry, material, plane, box, skybox, textureSkybox, controls, clock, keyboard, MovingCube,
- 	timeStep = 1/60;
-var mouse = {x: 0, y: 0};
+var camera, scene, renderer, geometry, material, plane, box, skybox, textureSkybox, controls, clock, keyboard, MovingCube, container, stats;
+// var lookAround = false;
 
 
 var init = function(){
 
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 10000 );
+	camera.position.y = 100;
+	camera.position.z = 500;
 	scene.add(camera);
 	//scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
-
-
-	// camera.position.set(0,1,30);
-	// camera.lookAt(scene.position);
 
 	keyboard = new THREEx.KeyboardState();
 	clock = new THREE.Clock();
 	
-	
-	
-
+	//LIGHTS
 	var pointLight	= new THREE.PointLight('white', 1);
 	pointLight.position.set(499, 499, 499);
 	scene.add( pointLight );
@@ -28,7 +23,7 @@ var init = function(){
 	var ambLight = new THREE.AmbientLight('0x444499');
 	scene.add(ambLight);
 
-
+	//SKYBOX
 	var skyGeometry = new THREE.BoxGeometry( 8000, 2000, 8000 );	
 	
 	var materialArray = [];
@@ -75,64 +70,38 @@ var init = function(){
 	scene.add( skyBox );
 	skyBox.position.y = 1000;
 
+	//MOVINGBOX
 	var boxGeometry = new THREE.BoxGeometry(40, 40, 40);
 	var boxMaterial = new THREE.MeshPhongMaterial( { color: 'blue' } );
 	MovingCube = new THREE.Mesh( boxGeometry, boxMaterial );
 	scene.add(MovingCube);
 	MovingCube.position.y += 20.1;
 
-	// controls = new THREE.MouseControls(MovingCube);
-	// controls = new THREE.FirstPersonControls(MovingCube);
-	// controls = new THREE.PointerLockControls(MovingCube);
-	controls = new THREE.OrbitControls(MovingCube);
 
-	controls.damping = 0.2;
-	controls.addEventListener( 'change', render );
-
+	//RENDERER
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight);
-	document.body.appendChild( renderer.domElement );	
-	// document.addEventListener('mosuemove', onDocumentMouseMove, false);
-	// window.addEventListener( 'resize', onWindowResize, false );
+	document.body.appendChild( renderer.domElement );
 
 	render();
 }	
 
+/*************************************/
+/*				FUNCTIONS			 */
+/*************************************/
 
-// function onWindowResize() {
-
-// 	camera.aspect = window.innerWidth / window.innerHeight;
-// 	camera.updateProjectionMatrix();
-
-// 	renderer.setSize( window.innerWidth, window.innerHeight );
-
-// 	render();
-
-// }
-
-    // function onDocumentMouseMove(event) {
-    //     mouse.x = (event.clientX / window.innerWidth) / 100;
-    //     mouse.y = (event.clientY / window.innerHeight) / 100;
-    //     console.log(mouse.x, mouse.y);
-    // }
-
-	
 function render () {
 	requestAnimationFrame( render );
-    // camera.lookAt(MovingCube.position);
 	renderer.render(scene, camera);
 	update();
-	// var delta = clock.getDelta();
-	// controls.update(delta);
-
 }
-
 
 function update(){
 	var delta = clock.getDelta(); // seconds.
 	var moveDistance = 200 * delta; // 200 pixels per second
 	var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 	
+
 	if ( keyboard.pressed("W") )
 		MovingCube.translateZ( -moveDistance );
 	if ( keyboard.pressed("S") )
@@ -151,12 +120,12 @@ function update(){
 		MovingCube.rotation.set(0,0,0);
 	}
 	
-	var relativeCameraOffset = new THREE.Vector3(0,30,300);
 
+	var relativeCameraOffset = new THREE.Vector3(0,100,450);
 	var cameraOffset = relativeCameraOffset.applyMatrix4( MovingCube.matrixWorld );
 
 	camera.position.x = cameraOffset.x;
 	camera.position.y = cameraOffset.y;
 	camera.position.z = cameraOffset.z;
-	camera.lookAt( MovingCube.position );
+    camera.lookAt(MovingCube.position);
 }

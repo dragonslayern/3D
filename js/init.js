@@ -1,8 +1,9 @@
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-var camera, scene, renderer, dirLight, hemiLight, keyboard, meshAnim;
+var camera, scene, renderer, dirLight, hemiLight, keyboard, meshAnim, meshAnim2, animation;
 var morphs = [];
 var stats, sphere;
+var guiControls, datGUI, controls;
 var material_sphere1, material_sphere2;
 
 var clock = new THREE.Clock();
@@ -37,18 +38,18 @@ function init() {
 
 
     //AUDIOLISTENER
-    var listener = new THREE.AudioListener();
-    camera.add(listener);
-
-    var mesh1 = new THREE.Mesh(sphere, material_sphere1);
-    mesh1.position.set(-250, 30, 0);
-    scene.add(mesh1);
-
-    var sound1 = new THREE.Audio(listener);
-    sound1.load('sound/oneday.mp3');
-    sound1.setRefDistance(20);
-    sound1.autoplay = true;
-    mesh1.add(sound1);
+    // var listener = new THREE.AudioListener();
+    // camera.add(listener);
+    //
+    // var mesh1 = new THREE.Mesh(sphere, material_sphere1);
+    // mesh1.position.set(-250, 30, 0);
+    // scene.add(mesh1);
+    //
+    // var sound1 = new THREE.Audio(listener);
+    // sound1.load('sound/nochurch.mp3');
+    // sound1.setRefDistance(1000);
+    // sound1.autoplay = true;
+    // mesh1.add(sound1);
 
     // LIGHTS
 
@@ -71,7 +72,7 @@ function init() {
     dirLight.shadowMapWidth = 2048;
     dirLight.shadowMapHeight = 2048;
 
-    var d = 50;
+    var d = 100;
 
     dirLight.shadowCameraLeft = -d;
     dirLight.shadowCameraRight = d;
@@ -83,45 +84,9 @@ function init() {
     dirLight.shadowDarkness = 0.35;
     //dirLight.shadowCameraVisible = true;
 
-    // lens flares
-    // var textureFlare0 = THREE.ImageUtils.loadTexture( "textures/lensflare/lensflare1.jpg" );
-    // var textureFlare2 = THREE.ImageUtils.loadTexture( "textures/lensflare/lensflare1.jpg" );
-    // var textureFlare3 = THREE.ImageUtils.loadTexture( "textures/lensflare/lensflare1.jpg" );
-    //
-    // addLight( 0.55, 0.9, 0.5, 5000, 0, -1000 );
-    // addLight( 0.08, 0.8, 0.5,    0, 0, -1000 );
-    // addLight( 0.995, 0.5, 0.9, 5000, 5000, -1000 );
-    //
-    // function addLight( h, s, l, x, y, z ) {
-    //
-    // 	var light = new THREE.PointLight( 0xffffff, 1.5, 4500 );
-    // 	light.color.setHSL( h, s, l );
-    // 	light.position.set( x, y, z );
-    // 	scene.add( light );
-    //
-    // 	var flareColor = new THREE.Color( 0xffffff );
-    // 	flareColor.setHSL( h, s, l + 0.5 );
-    //
-    // 	var lensFlare = new THREE.LensFlare( textureFlare0, 700, 0.0, THREE.AdditiveBlending, flareColor );
-    //
-    // 	lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
-    // 	lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
-    // 	lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
-    //
-    // 	lensFlare.add( textureFlare3, 60, 0.6, THREE.AdditiveBlending );
-    // 	lensFlare.add( textureFlare3, 70, 0.7, THREE.AdditiveBlending );
-    // 	lensFlare.add( textureFlare3, 120, 0.9, THREE.AdditiveBlending );
-    // 	lensFlare.add( textureFlare3, 70, 1.0, THREE.AdditiveBlending );
-    //
-    // 	lensFlare.customUpdateCallback = lensFlareUpdateCallback;
-    // 	lensFlare.position.copy( light.position );
-    //
-    // 	scene.add( lensFlare );
-    //
-    // }
+
 
     // GROUND
-
     var groundGeo = new THREE.PlaneBufferGeometry(10000, 10000);
     var groundMat = new THREE.MeshPhongMaterial({
       color: 0xffffff,
@@ -137,7 +102,6 @@ function init() {
     ground.receiveShadow = true;
 
     // SKYDOME
-
     var vertexShader = document.getElementById('vertexShader').textContent;
     var fragmentShader = document.getElementById('fragmentShader').textContent;
     var uniforms = {
@@ -178,31 +142,79 @@ function init() {
     // MODEL
 
     var loader = new THREE.JSONLoader();
+    //var kuk = 'models/animated/3D3.js';
+    loader.load("models/animated/test4.json", function(geometry, material) {
 
-    loader.load("models/animated/3D.js", function(geometry, material) {
+      morphColorsToFaceColors(geometry, material);
+      geometry.computeMorphNormals(material);
 
-      morphColorsToFaceColors(geometry);
-      geometry.computeMorphNormals();
+      var material = new THREE.MeshPhongMaterial({
+        morphTargets: true,
+        morphNormals: true,
+        specular: 0xffffff,
+        shading: THREE.SmoothShading,
+        vertexColors: THREE.FaceColors
+      });
 
-      var material = new THREE.MeshPhongMaterial('models/animated/3D.js');
+      // for (var i = 0; i < material.length; i++) {
+      //   material[i].morphTargets = true;
+      // }
+
+
       meshAnim = new THREE.MorphAnimMesh(geometry, material);
-
-
-      //den här kukar att röra
-      //meshAnim.duration = 1000;
+      meshAnim.duration = 93;
 
       var s = 10;
       meshAnim.scale.set(s, s, s);
       meshAnim.position.y = -33;
-      meshAnim.rotation.y = -0.5;
+      meshAnim.rotation.y = -
+        0.5;
 
       meshAnim.castShadow = true;
       meshAnim.receiveShadow = true;
+
 
       scene.add(meshAnim);
       morphs.push(meshAnim);
 
     });
+
+    // var loader2 = new THREE.JSONLoader();
+    // //var kuk = 'models/animated/3D3.js';
+    // loader2.load("models/animated/flamingo.js", function(geometry, material) {
+    //
+    //   morphColorsToFaceColors(geometry);
+    //   geometry.computeMorphNormals();
+    //
+    //
+    //
+    //   var material2 = new THREE.MeshPhongMaterial({
+    //     color: 0xffffff,
+    //     specular: 0xffffff,
+    //     shininess: 20,
+    //     morphTargets: true,
+    //     morphNormals: true,
+    //     vertexColors: THREE.FaceColors,
+    //     shading: THREE.FlatShading
+    //   });
+    //
+    //   meshAnim2 = new THREE.MorphAnimMesh(geometry, material);
+    //   meshAnim2.duration = 10;
+    //
+    //   var s2 = 0.35;
+    //   meshAnim2.scale.set(s2, s2, s2);
+    //   meshAnim2.position.y = -1;
+    //   meshAnim2.rotation.y = -0.5;
+    //   meshAnim2.position.x = -10;
+    //
+    //   meshAnim2.castShadow = true;
+    //   meshAnim2.receiveShadow = true;
+    //
+    //
+    //   scene.add(meshAnim2);
+    //   morphs.push(meshAnim2);
+    //
+    // });
     //END OF JSON LOADER
     // RENDERER
 
@@ -212,7 +224,8 @@ function init() {
     });
     renderer.setClearColor(scene.fog.color);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer
+      .setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
     renderer.gammaInput = true;
@@ -298,7 +311,7 @@ function render() {
   for (var i = 0; i < morphs.length; i++) {
 
     morph = morphs[i];
-    morph.updateAnimation(1000 * delta);
+    morph.updateAnimation(100 * delta);
 
   }
   requestAnimationFrame(render);

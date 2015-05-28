@@ -1,0 +1,20 @@
+http://aerotwist.com/tutorials/getting-started-with-three-js/
+
+http://threejs.org/docs/
+
+https://stemkoski.github.io/Three.js/
+
+https://stemkoski.github.io/Three.js/Skybox.html
+
+https://stemkoski.github.io/Three.js/Collision-Detection.html
+
+https://stemkoski.github.io/Three.js/Mesh-Movement.html
+
+https://stemkoski.github.io/Three.js/Chase-Camera.html
+
+http://matthew.wagerfield.com/parallax/
+
+http://mozvr.com/projects/sechelt/
+
+STARTER KIT:
+http://matthiasschuetz.com/three-basicthirdpersongame/
